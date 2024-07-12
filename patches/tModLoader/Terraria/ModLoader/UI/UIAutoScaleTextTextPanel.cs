@@ -26,8 +26,8 @@ public class UIAutoScaleTextTextPanel<T> : UIPanel
 	private Rectangle oldInnerDimensions;
 	private T _text = default;
 	private string oldText;
-	private string[] textStrings;
-	private Vector2[] drawOffsets;
+	protected string[] textStrings;
+	protected Vector2[] drawOffsets;
 
 	public UIAutoScaleTextTextPanel(T text, float textScaleMax = 1f, bool large = false) : base()
 	{

@@ -1,5 +1,6 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using ReLogic.Content;
 using Terraria.GameContent;
 using Terraria.Localization;
 using Terraria.UI;
@@ -10,18 +11,23 @@ internal class UIModStateText : UIElement
 {
 	private bool _enabled;
 
+	private static Asset<Texture2D> PanelTexture = Main.Assets.Request<Texture2D>("Images/UI/CharCreation/PanelGrayscale");
+
 	private string DisplayText
 		=> _enabled
 			? Language.GetTextValue("GameUI.Enabled")
 			: Language.GetTextValue("GameUI.Disabled");
 
 	private Color DisplayColor
-		=> _enabled ? Color.Green : Color.Red;
+		=> _enabled ? UIColors.enabledGreen : UIColors.disabledGray;
+
+	private Color TextColor
+		=> IsMouseHovering ? Color.Yellow : Color.White;
 
 	public UIModStateText(bool enabled = true)
 	{
 		_enabled = enabled;
-		PaddingLeft = PaddingRight = 5f;
+		PaddingLeft = PaddingRight = 8f;
 		PaddingBottom = PaddingTop = 10f;
 	}
 
@@ -56,14 +62,21 @@ internal class UIModStateText : UIElement
 	{
 		var position = GetDimensions().Position();
 		var width = Width.Pixels;
-		spriteBatch.Draw(UICommon.InnerPanelTexture.Value, position, new Rectangle(0, 0, 8, UICommon.InnerPanelTexture.Height()), Color.White);
-		spriteBatch.Draw(UICommon.InnerPanelTexture.Value, new Vector2(position.X + 8f, position.Y), new Rectangle(8, 0, 8, UICommon.InnerPanelTexture.Height()), Color.White, 0f, Vector2.Zero, new Vector2((width - 16f) / 8f, 1f), SpriteEffects.None, 0f);
-		spriteBatch.Draw(UICommon.InnerPanelTexture.Value, new Vector2(position.X + width - 8f, position.Y), new Rectangle(16, 0, 8, UICommon.InnerPanelTexture.Height()), Color.White);
+		var height = Height.Pixels;
+
+		spriteBatch.Draw(PanelTexture.Value, new Vector2(position.X + 8f, position.Y), new Rectangle(8, 0, 8, (int)height - 8), DisplayColor, 0f, Vector2.Zero, new Vector2((width - 16f) / 8f, 1f), SpriteEffects.None, 0f);
+		spriteBatch.Draw(PanelTexture.Value, new Vector2(position.X + 8f, position.Y + height - 8), new Rectangle(8, PanelTexture.Height() - 8, 8, 8), DisplayColor, 0f, Vector2.Zero, new Vector2((width - 16f) / 8f, 1f), SpriteEffects.None, 0f);
+
+		spriteBatch.Draw(PanelTexture.Value, position, new Rectangle(0, 0, 8, (int)height - 8), DisplayColor);
+		spriteBatch.Draw(PanelTexture.Value, new Vector2(position.X + width - 8f, position.Y), new Rectangle(PanelTexture.Width() - 8, 0, 8, (int)height -8), DisplayColor);
+
+		spriteBatch.Draw(PanelTexture.Value, position + Vector2.UnitY * (height - 8), new Rectangle(0, PanelTexture.Height() - 8, 8, 8), DisplayColor);
+		spriteBatch.Draw(PanelTexture.Value, new Vector2(position.X + width - 8f, position.Y + height - 8), new Rectangle(PanelTexture.Width() - 8, PanelTexture.Height() - 8, 8, 8), DisplayColor);
 	}
 
 	private void DrawEnabledText(SpriteBatch spriteBatch)
 	{
-		var pos = GetDimensions().Position() + new Vector2(PaddingLeft, PaddingTop * 0.5f);
-		Utils.DrawBorderString(spriteBatch, DisplayText, pos, DisplayColor);
+		var pos = GetDimensions().Position() + new Vector2(PaddingLeft, PaddingTop * 0.75f);
+		Utils.DrawBorderString(spriteBatch, DisplayText, pos, TextColor);
 	}
 }

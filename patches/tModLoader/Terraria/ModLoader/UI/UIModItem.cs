@@ -46,6 +46,7 @@ internal class UIModItem : UIPanel
 	private bool _loaded;
 	private int _modIconAdjust;
 	private string _tooltip;
+	private bool _outdated;
 	private string[] _modReferences;
 	private string[] _modDependents; // Note: Recursive
 	private string[] _modDependencies; // Note: Recursive
@@ -141,7 +142,7 @@ internal class UIModItem : UIPanel
 		// Detect if it's for a different browser version entirely
 		if (!CheckIfPublishedForThisBrowserVersion(out var modBrowserVersion)) {
 			updateVersion = $"{modBrowserVersion} v{_mod.tModLoaderVersion}";
-			updateColor = Color.Yellow;
+			updateColor = UIColors.infoYellow;
 		}
 
 		// Hide the Enabled button if it's not for this built version
@@ -156,9 +157,14 @@ internal class UIModItem : UIPanel
 				Utils.OpenToURL(updateURL);
 			};
 			Append(tMLUpdateRequired);
+			_outdated = true;
 		}
 		else
 			Append(_uiModStateText);
+
+		if (_outdated) {
+			_modIcon.Color = UIColors.disabledGray;
+		}
 
 		int bottomRightRowOffset = -36;
 		_moreInfoButton = new UIImage(UICommon.ButtonModInfoTexture) {
@@ -296,7 +302,7 @@ internal class UIModItem : UIPanel
 		if (loadedMod != null) {
 			_loaded = true;
 			// TODO: refactor and add nicer icons (and maybe not iterate 6 times)
-			int[] values = { loadedMod.GetContent<ModItem>().Count(), loadedMod.GetContent<ModNPC>().Count(), loadedMod.GetContent<ModTile>().Count(), loadedMod.GetContent<ModWall>().Count(), loadedMod.GetContent<ModBuff>().Count(), loadedMod.GetContent<ModMount>().Count() };
+			/*int[] values = { loadedMod.GetContent<ModItem>().Count(), loadedMod.GetContent<ModNPC>().Count(), loadedMod.GetContent<ModTile>().Count(), loadedMod.GetContent<ModWall>().Count(), loadedMod.GetContent<ModBuff>().Count(), loadedMod.GetContent<ModMount>().Count() };
 			string[] localizationKeys = { "ModsXItems", "ModsXNPCs", "ModsXTiles", "ModsXWalls", "ModsXBuffs", "ModsXMounts" };
 			int xOffset = -40;
 
@@ -310,7 +316,7 @@ internal class UIModItem : UIPanel
 					Append(_keyImage);
 					xOffset -= 18;
 				}
-			}
+			}*/
 		}
 
 		OnLeftDoubleClick += (e, el) => {
@@ -463,12 +469,24 @@ internal class UIModItem : UIPanel
 	private void SetHoverColors(bool hovered)
 	{
 		BorderColor = hovered ? new Color(89, 116, 213) : new Color(89, 116, 213) * 0.7f;
-		if (_mod.location == ModLocation.Local)
-			BackgroundColor = hovered ? Color.MediumPurple : Color.MediumPurple * 0.7f;
-		else if (_mod.location == ModLocation.Modpack)
+
+		if (_outdated) {
+			BackgroundColor = hovered ? UIColors.disabledGrayDark : UIColors.disabledGrayDark * 0.7f;
+			BorderColor = hovered ? UIColors.disabledGray : UIColors.disabledGray * 0.7f;
+		}
+
+		else if (_mod.location == ModLocation.Local) {
+			BackgroundColor = hovered ? UIColors.localPurpleDark : UIColors.localPurpleDark * 0.7f;
+			BorderColor = hovered ? UIColors.localPurple : UIColors.localPurple * 0.7f;
+		}
+
+		else if (_mod.location == ModLocation.Modpack) {
 			BackgroundColor = hovered ? Color.SkyBlue : Color.SkyBlue * 0.7f;
+		}
 		else
 			BackgroundColor = hovered ? UICommon.DefaultUIBlueMouseOver : UICommon.DefaultUIBlue;
+
+		
 	}
 
 	private void ToggleEnabled(UIMouseEvent evt, UIElement listeningElement)

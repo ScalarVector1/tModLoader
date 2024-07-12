@@ -100,21 +100,19 @@ internal class UIMods : UIState, IHaveBackButtonCommand
 		uIElement.Append(uIHeaderTexTPanel);
 
 		buttonEA = new UIAutoScaleTextTextPanel<LocalizedText>(Language.GetText("tModLoader.ModsEnableAll")) {
-			TextColor = Color.Green,
 			Width = new StyleDimension(-10f, 1f / 3f),
 			Height = { Pixels = 40 },
 			VAlign = 1f,
-			Top = { Pixels = -65 }
-		}.WithFadedMouseOver();
+			Top = { Pixels = -65 },
+		}.WithFadedMouseOver(UIColors.enabledGreen, UIColors.enabledGreen * 0.7f);
 		buttonEA.OnLeftClick += EnableAll;
 		uIElement.Append(buttonEA);
 
 		// TODO CopyStyle doesn't capture all the duplication here, consider an inner method
 		buttonDA = new UIAutoScaleTextTextPanel<LocalizedText>(Language.GetText("tModLoader.ModsDisableAll"));
 		buttonDA.CopyStyle(buttonEA);
-		buttonDA.TextColor = Color.Red;
 		buttonDA.HAlign = 0.5f;
-		buttonDA.WithFadedMouseOver();
+		buttonDA.WithFadedMouseOver(UIColors.dangerRed, UIColors.dangerRed * 0.7f);
 		buttonDA.OnLeftClick += DisableAll;
 		uIElement.Append(buttonDA);
 
