@@ -104,6 +104,7 @@ internal class UIMods : UIState, IHaveBackButtonCommand
 			Height = { Pixels = 40 },
 			VAlign = 1f,
 			Top = { Pixels = -65 },
+			BackgroundColor = UIColors.enabledGreen * 0.7f,
 		}.WithFadedMouseOver(UIColors.enabledGreen, UIColors.enabledGreen * 0.7f);
 		buttonEA.OnLeftClick += EnableAll;
 		uIElement.Append(buttonEA);
@@ -112,6 +113,7 @@ internal class UIMods : UIState, IHaveBackButtonCommand
 		buttonDA = new UIAutoScaleTextTextPanel<LocalizedText>(Language.GetText("tModLoader.ModsDisableAll"));
 		buttonDA.CopyStyle(buttonEA);
 		buttonDA.HAlign = 0.5f;
+		buttonDA.BackgroundColor = UIColors.dangerRed * 0.7f;
 		buttonDA.WithFadedMouseOver(UIColors.dangerRed, UIColors.dangerRed * 0.7f);
 		buttonDA.OnLeftClick += DisableAll;
 		uIElement.Append(buttonDA);

@@ -25,6 +25,7 @@ internal class UIModSourceItem : UIPanel
 {
 	private readonly string _mod;
 	internal readonly string modName;
+	private UIImage _modIcon;
 	private readonly Asset<Texture2D> _dividerTexture;
 	private readonly UIText _modName;
 	private readonly UIText _lastBuildTime;
@@ -51,11 +52,38 @@ internal class UIModSourceItem : UIPanel
 		string addendum = Path.GetFileName(mod).Contains(" ") ? $"  [c/FF0000:{Language.GetTextValue("tModLoader.MSModSourcesCantHaveSpaces")}]" : "";
 		modName = Path.GetFileName(mod);
 		_modName = new UIText(modName + addendum) {
-			Left = { Pixels = 10 },
+			Left = { Pixels = 95 },
 			Top = { Pixels = 5 }
 		};
 
 		Append(_modName);
+
+		var modIcon = Main.Assets.Request<Texture2D>("Images/UI/DefaultResourcePackIcon", AssetRequestMode.ImmediateLoad);
+
+		if (builtMod != null && builtMod.modFile.HasFile("icon.png")) {
+			try {
+				using (builtMod.modFile.Open())
+				using (var s = builtMod.modFile.GetStream("icon.png")) {
+					var iconTexture = Main.Assets.CreateUntracked<Texture2D>(s, ".png");
+
+					if (iconTexture.Width() == 80 && iconTexture.Height() == 80) {
+						modIcon = iconTexture;
+					}
+				}
+			}
+			catch (Exception e) {
+				Logging.tML.Error("Unknown error", e);
+			}
+		}
+
+		_modIcon = new UIImage(modIcon) {
+			Left = { Percent = 0f },
+			Top = { Percent = 0f },
+			Width = { Pixels = 80 },
+			Height = { Pixels = 80 },
+			ScaleToFit = true,
+		};
+		Append(_modIcon);
 
 		if (builtMod != null) {
 			string lastBuildTimeMessage = TimeHelper.HumanTimeSpanString(builtMod.lastModified, localTime: true);
@@ -76,10 +104,10 @@ internal class UIModSourceItem : UIPanel
 			Append(_lastBuildTime);
 		}
 
-		var buildButton = new UIAutoScaleTextTextPanel<string>(Language.GetTextValue("tModLoader.MSBuild")) {
+		var buildButton = new UIAutoScaleTextButton<string>(Language.GetTextValue("tModLoader.MSBuild")) {
 			Width = { Pixels = 100 },
 			Height = { Pixels = 36 },
-			Left = { Pixels = 10 },
+			Left = { Pixels = 95 },
 			Top = { Pixels = 40 }
 		}.WithFadedMouseOver();
 		buildButton.PaddingTop -= 2f;
@@ -87,29 +115,30 @@ internal class UIModSourceItem : UIPanel
 		buildButton.OnLeftClick += BuildMod;
 		Append(buildButton);
 
-		var buildReloadButton = new UIAutoScaleTextTextPanel<string>(Language.GetTextValue("tModLoader.MSBuildReload"));
+		var buildReloadButton = new UIAutoScaleTextButton<string>(Language.GetTextValue("tModLoader.MSBuildReload"));
 		buildReloadButton.CopyStyle(buildButton);
 		buildReloadButton.Width.Pixels = 200;
-		buildReloadButton.Left.Pixels = 150;
+		buildReloadButton.Left.Pixels = 200;
 		buildReloadButton.WithFadedMouseOver();
 		buildReloadButton.OnLeftClick += BuildAndReload;
 		Append(buildReloadButton);
 
 		_builtMod = builtMod;
 		if (builtMod != null && LocalizationLoader.changedMods.Contains(modName)) {
-			needRebuildButton = new UIAutoScaleTextTextPanel<string>(Language.GetTextValue("tModLoader.MSRebuildRequired"));
+			needRebuildButton = new UIAutoScaleTextButton<string>(Language.GetTextValue("tModLoader.MSRebuildRequired"));
 			needRebuildButton.CopyStyle(buildReloadButton);
 			needRebuildButton.Width.Pixels = 180;
-			needRebuildButton.Left.Pixels = 360;
+			needRebuildButton.Left.Pixels = 400;
 			needRebuildButton.BackgroundColor = Color.Red;
 			Append(needRebuildButton);
 		}
 		else if (builtMod != null) {
-			var publishButton = new UIAutoScaleTextTextPanel<string>(Language.GetTextValue("tModLoader.MSPublish"));
+			var publishButton = new UIAutoScaleTextButton<string>(Language.GetTextValue("tModLoader.MSPublish"));
 			publishButton.CopyStyle(buildReloadButton);
 			publishButton.Width.Pixels = 100;
-			publishButton.Left.Pixels = 390;
-			publishButton.WithFadedMouseOver();
+			publishButton.Left.Pixels = 420;
+			publishButton.BackgroundColor = UIColors.infoYellow * 0.7f;
+			publishButton.WithFadedMouseOver(UIColors.infoYellow, UIColors.infoYellow * 0.7f);
 
 			if (builtMod.properties.side == ModSide.Server) {
 				publishButton.OnLeftClick += PublishServerSideMod;
@@ -182,8 +211,8 @@ internal class UIModSourceItem : UIPanel
 	{
 		base.DrawSelf(spriteBatch);
 		CalculatedStyle innerDimensions = GetInnerDimensions();
-		Vector2 drawPos = new Vector2(innerDimensions.X + 5f, innerDimensions.Y + 30f);
-		spriteBatch.Draw(_dividerTexture.Value, drawPos, null, Color.White, 0f, Vector2.Zero, new Vector2((innerDimensions.Width - 10f) / 8f, 1f), SpriteEffects.None, 0f);
+		Vector2 drawPos = new Vector2(innerDimensions.X + 90f, innerDimensions.Y + 30f);
+		spriteBatch.Draw(_dividerTexture.Value, drawPos, null, Color.White, 0f, Vector2.Zero, new Vector2((innerDimensions.Width - 95f) / 8f, 1f), SpriteEffects.None, 0f);
 
 		if (!_upgradePotentialChecked) {
 			_upgradePotentialChecked = true;
