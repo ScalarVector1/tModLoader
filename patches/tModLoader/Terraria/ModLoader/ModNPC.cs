@@ -417,7 +417,8 @@ public abstract class ModNPC : ModType<NPC, ModNPC>, ILocalizedModType
 	}
 
 	/// <summary>
-	/// Allows you to modify the damage, etc., that this NPC does to a player. <br/>
+	/// Allows you to modify the damage, etc., that this NPC does to a player. 
+ 	/// This hook should be used ONLY to modify properties of the HitModifiers, any extra effects should occur in OnHit hooks! <br/>
 	/// Runs on the local client. <br/>
 	/// </summary>
 	/// <param name="target"></param>
@@ -457,7 +458,8 @@ public abstract class ModNPC : ModType<NPC, ModNPC>, ILocalizedModType
 	}
 
 	/// <summary>
-	/// Allows you to modify the damage, knockback, etc., that this NPC does to a friendly NPC. <br/>
+	/// Allows you to modify the damage, knockback, etc., that this NPC does to a friendly NPC. 
+ 	/// This hook should be used ONLY to modify properties of the HitModifiers, any extra effects should occur in OnHit hooks! <br/>
 	/// Runs in single player or on the server. <br/>
 	/// </summary>
 	/// <param name="target"></param>
@@ -503,7 +505,8 @@ public abstract class ModNPC : ModType<NPC, ModNPC>, ILocalizedModType
 	}
 
 	/// <summary>
-	/// Allows you to modify the damage, knockback, etc., that this NPC takes from a melee weapon. <br/>
+	/// Allows you to modify the damage, knockback, etc., that this NPC takes from a melee weapon. 
+    /// This hook should be used ONLY to modify properties of the HitModifiers, any extra effects should occur in OnHit hooks! <br/>
 	/// Runs on the local client. <br/>
 	/// </summary>
 	/// <param name="player"></param>
@@ -537,7 +540,8 @@ public abstract class ModNPC : ModType<NPC, ModNPC>, ILocalizedModType
 
 	/// <summary>
 	/// Allows you to modify the damage, knockback, etc., that this NPC takes from a projectile. This method is only called for the owner of the projectile, meaning that in multi-player, projectiles owned by a player call this method on that client, and projectiles owned by the server such as enemy projectiles call this method on the server.
-	/// </summary>
+	/// This hook should be used ONLY to modify properties of the HitModifiers, any extra effects should occur in OnHit hooks!
+ 	/// </summary>
 	/// <param name="projectile"></param>
 	/// <param name="modifiers"></param>
 	public virtual void ModifyHitByProjectile(Projectile projectile, ref NPC.HitModifiers modifiers)
@@ -556,6 +560,7 @@ public abstract class ModNPC : ModType<NPC, ModNPC>, ILocalizedModType
 
 	/// <summary>
 	/// Allows you to use a custom damage formula for when this NPC takes damage from any source. For example, you can change the way defense works or use a different crit multiplier.
+ 	/// This hook should be used ONLY to modify properties of the HitModifiers, any extra effects should occur in OnHit hooks!
 	/// </summary>
 	/// <param name="modifiers"></param>
 	public virtual void ModifyIncomingHit(ref NPC.HitModifiers modifiers)
